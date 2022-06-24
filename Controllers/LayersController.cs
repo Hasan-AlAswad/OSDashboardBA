@@ -23,7 +23,7 @@ namespace OSLayerBA.Controllers
             this.fileService = fileService;
         }
 
-        // fn - actions - asdsadasdasd
+        // fn - actions - 
 
         // get 
         [Route("GetAllLayers")]     // route
