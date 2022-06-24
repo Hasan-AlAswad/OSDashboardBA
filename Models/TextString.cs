@@ -7,8 +7,4 @@ namespace OSDashboardBA.Models
         public int Id { get; set; }
         public string Text { get; set; }
     }
-    public class TextDTOString
-    {
-        public string Text { get; set; }
-    }
 }

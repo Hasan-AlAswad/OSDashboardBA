@@ -10,7 +10,7 @@ namespace OSDashboardBA.Models
         {
             CreatedOn = DateTime.Now;
             UserD = new User();
-            GeoJson = new List<TextDTOString>();
+            GeoJson = new List<TextString>();
         }
 
         // props
@@ -19,7 +19,7 @@ namespace OSDashboardBA.Models
         // public string[]? Attributes { get; set; }       // check - schemeless ?
         public DateTime CreatedOn { get; set; }
         // geojson
-        public List<TextDTOString> GeoJson { get; set; }
+        public List<TextString> GeoJson { get; set; }
 
         public Boolean IsDeleted { get; set; }
         // relations 
@@ -34,14 +34,14 @@ namespace OSDashboardBA.Models
         public int Id { get; set; }
         public string LayerName { get; set; }
         public DateTime CreatedOn { get; set; }
-        public List<TextDTOString> GeoJson { get; set; }
+        public List<TextString> GeoJson { get; set; }
     }
 
     // POST 
     public class LayPostDTO
     {
         public string LayerName { get; set; }
-        public List<TextDTOString> GeoJson { get; set; }
+        public List<TextString> GeoJson { get; set; }
 
     }
 }
