@@ -9,14 +9,12 @@ namespace OSDashboardBA.Models
         {
             Dashboards = new List<Dashboard>();
             Layers = new List<Layer>();
-            CreatedOn = DateTime.Now;
         }
 
         // props
         public int Id { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; }
         public Boolean IsDeleted { get; set; }
-        public DateTime CreatedOn { get; set; }
 
         //// from registeration
         //public string? FirstName { get; set; }
@@ -24,8 +22,8 @@ namespace OSDashboardBA.Models
         //public int Age { get; set; }
 
         // relations 
-        public List<Dashboard>? Dashboards { get; set; }         // many
-        public List<Layer>? Layers { get; set; }                    // many
+        public List<Dashboard> Dashboards { get; set; }         // many
+        public List<Layer> Layers { get; set; }                    // many
 
     }
 
@@ -42,14 +40,14 @@ namespace OSDashboardBA.Models
     // dto  - to be continued 
     public class UserGetDTO
     {
-        public string? Name { get; set; }
-        public List<Dashboard>? Dashboards { get; set; }
-        public List<Layer>? Layers { get; set; }
+        public string Name { get; set; }
+        public List<Dashboard> Dashboards { get; set; }
+        public List<Layer> Layers { get; set; }
 
     }
 
     public class UserPostDTO
     {
-        public string? Name { get; set; }
+        public string Name { get; set; }
     }
 }

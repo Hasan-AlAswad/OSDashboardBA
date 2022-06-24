@@ -26,7 +26,6 @@ namespace OSLayerBA.Controllers
         // fn - actions - 
 
         // get 
-        [Route("GetAllLayers")]     // route
         [HttpGet]                     // verb // [attribute]
         public IActionResult GetAllLayers()
         {
@@ -35,21 +34,21 @@ namespace OSLayerBA.Controllers
             var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true).ToList();
 
             // new obj of dto to show data 
+            if (oldLay.Count() > 0)
+            {
             var newLay = new List<LayGetDTO>();
 
             foreach (Layer lay in oldLay)
             {
                 newLay.Add(new LayGetDTO()
                 {
+                    Id = lay.Id,
                     LayerName = lay.LayerName,
-                    LayerDescription = lay.LayerDescription,
-                    CreatedDate = lay.CreatedDate,
-                    // LayerUser = lay.UserL
+                    CreatedOn = lay.CreatedOn,
+                    GeoJson = lay.GeoJson,
                 });
             }
 
-            if (newLay.Count() > 0)
-            {
                 return Ok(newLay);
             }
             else
@@ -59,27 +58,28 @@ namespace OSLayerBA.Controllers
         }
 
         // SHORTLY add one Layer "json in body" fn()
-        [Route("AddLayer")]
         [HttpPost]
         public IActionResult AddLayer(LayPostDTO newLay)  // , int userId
         {
+             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var lay = new Layer()
             {
                 LayerName = newLay.LayerName,
-                LayerDescription = newLay.LayerDescription,
-
+                GeoJson=newLay.GeoJson,
+                UserId = userId
             };
 
             _context.Layers.Add(lay);   // wrong: add new layer to layers list not to layers of a user 
+            _context.SaveChanges();
+            return Ok("m**en Omak Eshtaghal");
             //string.Format("{0}",newLay)
             //RequestContext.Principal
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson);
+            // fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson);
 
             // userId : extract from jwt token 
-            _context.SaveChanges();
-            return Ok($"Layer: {lay.LayerName} was added successfully!");
+            // _context.SaveChanges();
+            // return Ok($"Layer: {lay.LayerName} was added successfully!");
 
             //var userD = _context.UserDashs.FirstOrDefault(us => us.Id == userId);
             //if (userD != null)
@@ -96,43 +96,39 @@ namespace OSLayerBA.Controllers
         }
 
         // edit DepName by id fn() // NEED CHECK !
-        [Route("EditLayer")]
-        [HttpPut]
-        public IActionResult EditLayer(int id, LayPostDTO newLay)
+        [HttpPut("{layerId:int}")]
+        public IActionResult EditLayer(int layerId, LayPostDTO newLay)
         {
             // access wanted dep with sent id
-            var oldDs = _context.Layers.FirstOrDefault(lay => lay.Id == id);
+            var oldDs = _context.Layers.FirstOrDefault(lay => lay.Id == layerId);
             if (oldDs != null)
             {
                 oldDs.LayerName = newLay.LayerName;
-                oldDs.LayerDescription = newLay.LayerDescription;
-
-
+                oldDs.GeoJson = newLay.GeoJson;
                 _context.SaveChanges();
                 return Ok($"Layer: {oldDs.LayerName} was edited");
             }
             else
             {
-                return Ok($"no Layer with id: {id}");
+                return Ok($"no Layer with id: {layerId}");
             }
         }
 
         // delete fn()
-        [Route("DeleteLayer")]
-        [HttpDelete]
-        public IActionResult DeleteLayer(int id)
+        [HttpDelete("{layerId:int}")]
+        public IActionResult DeleteLayer(int layerId)
         {
             // access dep with given id 
-            var lay = _context.Layers.FirstOrDefault(ly => ly.Id == id); // notes 
+            var lay = _context.Layers.FirstOrDefault(ly => ly.Id == layerId); // notes 
             if (lay != null)
             {
                 lay.IsDeleted = true;
                 _context.SaveChanges();
-                return Ok($"Layer with id: {id} was deleted!");
+                return Ok($"Layer with id: {layerId} was deleted!");
             }
             else
             {
-                return Ok($"no Layer with id: {id}");
+                return Ok($"no Layer with id: {layerId}");
             }
 
         }
@@ -156,7 +152,28 @@ namespace OSLayerBA.Controllers
             }
 
         }
+        [HttpGet("{layerId:int}")]
+        public IActionResult getLayerById(int layerId)             /*List<Dashboard>*/
+        {
 
+            var layer = _context.Layers.FirstOrDefault(ds => ds.Id == layerId);
+            // new obj of dto to show data 
+            if (layer != null)
+            {
+                var lay = new LayGetDTO()
+                {
+                    Id = layer.Id,
+                    LayerName = layer.LayerName,
+                    CreatedOn = layer.CreatedOn,
+                    GeoJson = layer.GeoJson,
+                };
+                return Ok(lay);
+            }
+            else
+            {
+                return Ok("no Dashboards with the with such a part of its name !");
+            }
+        }
         // search by part of dash name 
         [Route("SearchByName")]
         [HttpGet]
@@ -165,5 +182,6 @@ namespace OSLayerBA.Controllers
             var pNameE = pName.ToUpper();
             return _context.Layers.Where(ly => ly.LayerName.Contains(pNameE)).ToList();
         }
+
     }
 }

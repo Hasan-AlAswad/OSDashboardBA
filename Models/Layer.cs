@@ -1,50 +1,47 @@
-﻿namespace OSDashboardBA.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace OSDashboardBA.Models
 {
     public class Layer
     {
         // ctor
         public Layer()
         {
-            Dashbords = new List<Dashboard>();
             CreatedOn = DateTime.Now;
+            UserD = new User();
+            GeoJson = new List<TextDTOString>();
         }
 
         // props
         public int Id { get; set; }
-        public string? LayerName { get; set; }
-        public string? LayerDescription { get; set; }
+        public string LayerName { get; set; }
         // public string[]? Attributes { get; set; }       // check - schemeless ?
-        public DateTime CreatedDate { get; set; }
-        public Boolean IsDeleted { get; set; }
         public DateTime CreatedOn { get; set; }
         // geojson
-        public string GeoJson { get; set; }
+        public List<TextDTOString> GeoJson { get; set; }
 
-        // attribtes
-
-
-
+        public Boolean IsDeleted { get; set; }
         // relations 
-        public User? Users { get; set; }             // check 
-        public List<Dashboard> Dashbords { get; set; }
+        public string UserId { get; set; }
+        public User UserD { get; set; }             // check 
     }
 
     // DTOs
     // GET 
     public class LayGetDTO
     {
-        public string? LayerName { get; set; }
-        public string? LayerDescription { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public User? LayerUser { get; set; }   // pending
+        public int Id { get; set; }
+        public string LayerName { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public List<TextDTOString> GeoJson { get; set; }
     }
 
     // POST 
     public class LayPostDTO
     {
-        public string? LayerName { get; set; }
-        public string? LayerDescription { get; set; }
-        public string GeoJson { get; set; }
+        public string LayerName { get; set; }
+        public List<TextDTOString> GeoJson { get; set; }
 
     }
 }

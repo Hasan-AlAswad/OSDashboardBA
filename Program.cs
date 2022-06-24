@@ -18,10 +18,21 @@ using OSDashboardBA.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 
 builder.Services.AddScoped<FileService>();  // 
 
+// CORS allow
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("http://example.com",
+                                "http://www.contoso.com");
+        });
+});
 //// H- identity service
 //builder.Services.AddIdentity<User, AppRole>(options =>
 //    options.SignIn.RequireConfirmedAccount = false)   // -REQUIRED-: to be TRUE -check later- 
@@ -68,6 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthentication(); // H- Middleware to read credintials from cookies
 app.UseAuthorization();

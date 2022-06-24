@@ -1,4 +1,7 @@
-﻿namespace OSDashboardBA.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace OSDashboardBA.Models
 {
     public class Dashboard
     {
@@ -6,23 +9,25 @@
         public Dashboard()
         {
             Layers = new List<Layer>();
-            Users= new User();
             CreatedOn = DateTime.Now;
+            UserD = new User();
+            Widgets = new List<TextDTOString>();
         }
-        
-        // need to check mongodb or use params []
+
 
         // public Guid Id { get; set; }
         public int Id { get; set; }
-        public string? Name { get; set; }              
+        public string Name { get; set; }
         public Boolean IsDeleted { get; set; }
         public DateTime CreatedOn { get; set; }           // creation date
+        public List<TextDTOString> Widgets { get; set; }
         // charts ?
 
         // relation props 
-        public User? Users { get; set; }     // one 
+        public string UserId { get; set; }     // nav prop 
         public List<Layer> Layers { get; set; } // many
-        public int UserId { get; set; } // navigation property
+
+        public User UserD { get; set; }
 
     }
 
@@ -30,19 +35,16 @@
     // get
     public class DashGetDTO
     {
-        public string? Name { get; set; }
-        public User? Users { get; set; }     // one 
-        public List<Layer>? Layers { get; set; } // many
-        public int LayersCount { get; set; }
-        public DateTime CreatedDate { get; set; }
-
-
-
+        public string Name { get; set; }
+        public List<Layer> Layers { get; set; } // many
+        public DateTime CreatedOn { get; set; }
+        public List<TextDTOString> Widgets { get; set; }
     }
     // post
     public class DashPostDTO
     {
-        public string? Name { get; set; }
-         
+        public string Name { get; set; }
+        public List<Layer> Layers { get; set; } // many
+        public List<TextDTOString> Widgets { get; set; }
     }
 }

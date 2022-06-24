@@ -18,9 +18,9 @@ namespace OSDashboardBA.DB
         }
 
         // props // add classes as tables in db 
-        public DbSet<User>? Users { get; set; }   // useres
-        public DbSet<Dashboard>? Dashboards { get; set; }
-        public DbSet<Layer>? Layers { get; set; }
+        public DbSet<User> Users { get; set; }   // useres
+        public DbSet<Dashboard> Dashboards { get; set; }
+        public DbSet<Layer> Layers { get; set; }
 
 
 
