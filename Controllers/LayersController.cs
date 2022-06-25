@@ -5,6 +5,7 @@ using OSDashboardBA.DB;
 using OSDashboardBA.Models;
 using OSDashboardBA.Services;
 using System.Security.Claims;
+using Newtonsoft.Json;
 
 namespace OSLayerBA.Controllers
 {
@@ -45,7 +46,7 @@ namespace OSLayerBA.Controllers
                     Id = lay.Id,
                     LayerName = lay.LayerName,
                     CreatedOn = lay.CreatedOn,
-                    GeoJson = lay.GeoJson,
+                    // GeoJson = lay.GeoJson,
                 });
             }
 
@@ -65,9 +66,12 @@ namespace OSLayerBA.Controllers
             var lay = new Layer()
             {
                 LayerName = newLay.LayerName,
-                GeoJson=newLay.GeoJson,
-                UserId = userId
+                // GeoJson=newLay.GeoJson,
+                UserId = userId,
+               
             };
+            var path = fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson, lay.Id);
+            lay.GeoJson = path;
 
             _context.Layers.Add(lay);   // wrong: add new layer to layers list not to layers of a user 
             _context.SaveChanges();
@@ -76,7 +80,7 @@ namespace OSLayerBA.Controllers
             //string.Format("{0}",newLay)
             //RequestContext.Principal
 
-            // fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson);
+            
 
             // userId : extract from jwt token 
   
@@ -139,58 +143,65 @@ namespace OSLayerBA.Controllers
         //    }
 
         //}
-
+       // [Route("/searchId")]
         [HttpGet("{layerId}")]
         public IActionResult GetLayerById(int layerId)             
         {
-
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var layer = _context.Layers.FirstOrDefault(ds => ds.Id == layerId);
+            
             if (layer != null)
             {
+                
+                // string readFile = fileService.ReadFile($@"Files\{userId}\GeoJsons\{layerId}.json");
+                string readFile = fileService.ReadFile(layer.GeoJson);
+
                 var lay = new LayGetDTO()               // new obj of dto to show data 
                 {
                     Id = layer.Id,
                     LayerName = layer.LayerName,
                     CreatedOn = layer.CreatedOn,
-                    GeoJson = layer.GeoJson,
+                    GeoJson = readFile,
+
                 };
                 return Ok(lay);
             }
             else
             {
-                return Ok("no Layers with the with such a part of its name !");
+                return Ok($"no Layers with id :{userId}!");
             }
         }
 
-        // search by part of layer name 
-        [HttpGet("{pName}")]
-        public IActionResult SearchByName(string pName)
-        {
-            var pNameE = pName.ToUpper();
-            var oldLay =  _context.Layers.Where(ly => ly.LayerName.ToUpper().Contains(pNameE)).ToList();
+        //// search by part of layer name 
+        //[Route("/searchName")]
+        //[HttpGet("{pName}")]
+        //public IActionResult SearchByName(string pName)
+        //{
+        //    var pNameE = pName.ToUpper();
+        //    var oldLay =  _context.Layers.Where(ly => ly.LayerName.ToUpper().Contains(pNameE)).ToList();
              
-            if (oldLay.Count() > 0)
-            {
-                var newLay = new List<LayGetDTO>();// new obj of dto to show data
+        //    if (oldLay.Count() > 0)
+        //    {
+        //        var newLay = new List<LayGetDTO>();// new obj of dto to show data
 
-                foreach (Layer lay in oldLay)
-                {
-                    newLay.Add(new LayGetDTO()
-                    {
-                        Id = lay.Id,
-                        LayerName = lay.LayerName,
-                        CreatedOn = lay.CreatedOn,
-                        GeoJson = lay.GeoJson,
-                    });
-                }
-                return Ok(newLay);
-            }
-            else
-            {
-                return Ok("no Layers with specific part od name !");
-            }
+        //        foreach (Layer lay in oldLay)
+        //        {
+        //            newLay.Add(new LayGetDTO()
+        //            {
+        //                Id = lay.Id,
+        //                LayerName = lay.LayerName,
+        //                CreatedOn = lay.CreatedOn,
+        //                GeoJson = lay.GeoJson,
+        //            });
+        //        }
+        //        return Ok(newLay);
+        //    }
+        //    else
+        //    {
+        //        return Ok("no Layers with specific part od name !");
+        //    }
 
-        }
+        //}
 
     }
 }

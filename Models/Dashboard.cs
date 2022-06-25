@@ -12,7 +12,7 @@ namespace OSDashboardBA.Models
             Layers = new List<Layer>();
             CreatedOn = DateTime.Now;
             UserD = new User();
-            Widgets = new List<TextString>();
+            
         }
 
 
@@ -21,7 +21,7 @@ namespace OSDashboardBA.Models
         public string Name { get; set; }
         public Boolean IsDeleted { get; set; }
         public DateTime CreatedOn { get; set; }           // creation date
-        public List<TextString> Widgets { get; set; }
+        public string Widgets { get; set; }
         // charts ?
 
         // relation props 
@@ -39,13 +39,13 @@ namespace OSDashboardBA.Models
         public string Name { get; set; }
         public List<Layer> Layers { get; set; } // many
         public DateTime CreatedOn { get; set; }
-        public List<TextString> Widgets { get; set; }
+        public string Widgets { get; set; }
     }
     // post
     public class DashPostDTO
     {
         public string Name { get; set; }
         public List<Layer> Layers { get; set; } // many
-        public List<TextString> Widgets { get; set; }
+        public string Widgets { get; set; }
     }
 }
