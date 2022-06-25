@@ -1,15 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using OSDashboardBA.DB;
+using OSDashboardBA.Services;
+using System.Text.Json.Serialization;
 using OSDashboardBA.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
-using System.Text.Json.Serialization;
-
 //
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Converters;
 using Newtonsoft.Json;
-using OSDashboardBA.Services;
 //
 
 
@@ -21,9 +20,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddScoped<FileService>();  // 
+builder.Services.AddScoped<FileService>();  // H- file services
 
-// CORS allow
+// H- add CORS 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -33,10 +32,12 @@ builder.Services.AddCors(options =>
                                 "http://www.contoso.com");
         });
 });
+
 //// H- identity service
 //builder.Services.AddIdentity<User, AppRole>(options =>
 //    options.SignIn.RequireConfirmedAccount = false)   // -REQUIRED-: to be TRUE -check later- 
 //        .AddEntityFrameworkStores<AppDbContext>();
+
 
 // H- link appDbContext and Npgsql server db with conn string through builder services 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -70,6 +71,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+//// H- google auth 
+//builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+//{
+//    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+//    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+//});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

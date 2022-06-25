@@ -26,7 +26,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult GetAllUserDashs()
         {
             // get list of dashboards exist
-            var oldUsers = _context.Users.Where(ly => ly.IsDeleted != true).ToList();
+            var oldUsers = _context.UsersD.Where(ly => ly.IsDeleted != true).ToList();
 
             // new obj of dto to show data 
             var newUsers = new List<UserGetDTO>();
@@ -63,7 +63,7 @@ namespace OSDashboardBA.Controllers
          
 
             };
-            _context.Users.Add(user);
+            _context.UsersD.Add(user);
             _context.SaveChanges();
             return Ok($"User: {newUser.Name} was added successfully!");
         }
@@ -74,7 +74,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult EditUser(int id, UserPostDTO newUser)
         {
             // access wanted dep with sent id
-            var oldUser = _context.Users.FirstOrDefault(user => user.Id == id);
+            var oldUser = _context.UsersD.FirstOrDefault(user => user.Id == id);
             if (oldUser != null)
             {
                 oldUser.Name = newUser.Name;
@@ -96,7 +96,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult DeleteUser(int id)
         {
             // access dep with given id 
-            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            var user = _context.UsersD.FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
                 user.IsDeleted = true;
@@ -116,7 +116,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult DropUser(int id)
         {
             // access dep with given id 
-            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            var user = _context.UsersD.FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
                 _context.Remove(user);
@@ -136,7 +136,7 @@ namespace OSDashboardBA.Controllers
         public List<User> SearchByName(string pName)
         {
             var pNameE = pName.ToUpper();
-            return _context.Users.Where(u => u.Name.Contains(pNameE)).ToList();
+            return _context.UsersD.Where(u => u.Name.Contains(pNameE)).ToList();
         }
     }
 }
