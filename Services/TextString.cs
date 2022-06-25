@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace OSDashboardBA.Models
+namespace OSDashboardBA.Services
 {
     public class TextString
     {

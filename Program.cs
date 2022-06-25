@@ -2,47 +2,37 @@ using Microsoft.EntityFrameworkCore;
 using OSDashboardBA.DB;
 using OSDashboardBA.Services;
 using System.Text.Json.Serialization;
-using OSDashboardBA.Models;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
-//
-using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.IO.Converters;
-using Newtonsoft.Json;
-//
-
-
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using OSDashboardBA.Auth;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 
 builder.Services.AddScoped<FileService>();  // H- file services
 
-// H- add CORS 
+// H- add CORS // link backend with front 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins("http://example.com",
-                                "http://www.contoso.com");
+            policy.WithOrigins("http://localhost:3000/");
         });
 });
 
-//// H- identity service
-//builder.Services.AddIdentity<User, AppRole>(options =>
-//    options.SignIn.RequireConfirmedAccount = false)   // -REQUIRED-: to be TRUE -check later- 
-//        .AddEntityFrameworkStores<AppDbContext>();
 
-
+// H- For Entity Framework
 // H- link appDbContext and Npgsql server db with conn string through builder services 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("OSDashboardConnection"));
+    options.UseSqlServer(configuration.GetConnectionString("OSDashboardConnection"));
     
 });
 
@@ -52,10 +42,38 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // mssql -->
 //  options.UseSqlServer(builder.Configuration.GetConnectionString("OSDashboardConnection"));
 
+//// H- identity service
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
 //H- to handle reference loop using newtonSoft.json package
 builder.Services.AddControllers()
         .AddJsonOptions(options => options.JsonSerializerOptions
             .ReferenceHandler = ReferenceHandler.Preserve);
+
+// Adding Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+
+// Adding Jwt Bearer
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = configuration["JWT:ValidAudience"],
+        ValidIssuer = configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+    };
+});
 
 // geojson
 //builder.Services.AddControllers()

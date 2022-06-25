@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OSDashboardBA.DB;
+//using OSDashboardBA.DB;
 using OSDashboardBA.Models;
 using System.Security.Claims;
+using OSDashboardBA.Auth;
+using OSDashboardBA.DB;
 
 namespace OSDashboardBA.Controllers
 {
@@ -47,7 +49,7 @@ namespace OSDashboardBA.Controllers
             }
             else
             {
-                return Ok("no Dashboards yet!");
+                return Ok("No Dashboards yet!");
             }
         }
 
@@ -67,28 +69,14 @@ namespace OSDashboardBA.Controllers
             _context.Dashboards.Add(dsp);   // add new db to general dbs list not to db of a user 
             _context.SaveChanges();
             return Ok($"Dashboard: {newDsb.Name} was added successfully!");
-
-            //var userD = _context.UserDashs.FirstOrDefault(us => us.Id == userId);
-            //if (userD != null)
-            //{
-            //    userD.Dashboards.Add(dsp);
-            //    _context.SaveChanges();
-            //    return Ok($"Dashboard: {newDsb.Name} was added successfully!");
-            //}
-            //else
-            //{
-            //    return Ok($"no user with id: {userId}");
-            //}
-
-
         }
 
-        // edit DepName by id fn() // NEED CHECK !
-        [HttpPut("{dashId:int}")]
-        public IActionResult EditDashboard(int dashId, DashPostDTO newDs)
+        // edit D Name by id fn() // NEED CHECK !
+        [HttpPut("{id}")]
+        public IActionResult EditDashboard(int id, DashPostDTO newDs)
         {
             // access wanted dep with sent id
-            var oldDs = _context.Dashboards.FirstOrDefault(ds => ds.Id == dashId);
+            var oldDs = _context.Dashboards.FirstOrDefault(ds => ds.Id == id);
             if (oldDs != null)
             {
                 oldDs.Name = newDs.Name;
@@ -99,32 +87,31 @@ namespace OSDashboardBA.Controllers
             }
             else
             {
-                return Ok($"no Dashboard with id: {dashId}");
+                return Ok($"No Dashboard with id: {id}");
             }
         }
 
         // delete fn()
-        [HttpDelete("{dashId:int}")]
-        public IActionResult DeleteDashboard(int dashId)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteDashboard(int id)
         {
-            // access dep with given id 
-            var ds = _context.Dashboards.FirstOrDefault(ds => ds.Id == dashId);
+            // access ds with given id 
+            var ds = _context.Dashboards.FirstOrDefault(ds => ds.Id == id);
             if (ds != null)
             {
                 ds.IsDeleted = true;
                 _context.SaveChanges();
-                return Ok($"Dashboard with id: {dashId} was deleted!");
+                return Ok($"Dashboard with id: {id} was deleted!");
             }
             else
             {
-                return Ok($"no Dashboard with id: {dashId}");
+                return Ok($"No Dashboard with id: {id}");
             }
 
         }
 
         // drop fn()
-        [Route("DropDashboard")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DropDashboard(int id)
         {
             // access dep with given id 
@@ -137,16 +124,15 @@ namespace OSDashboardBA.Controllers
             }
             else
             {
-                return Ok($"no Dashboard with id: {id}");
+                return Ok($"No Dashboard with id: {id}");
             }
 
         }
 
-        // get 
-        [HttpGet("{dashId:int}")]
-        public IActionResult getDashById(int dashId)             /*List<Dashboard>*/
+        // get by id 
+        [HttpGet("{dashId}")]
+        public IActionResult GetDashById(int dashId)            
         {
-
             var dash = _context.Dashboards.FirstOrDefault(ds => ds.Id == dashId);
             // new obj of dto to show data 
             if (dash!=null)
@@ -161,8 +147,38 @@ namespace OSDashboardBA.Controllers
             }
             else
             {
-                return Ok("no Dashboards with the with such a part of its name !");
+                return Ok($"No Dashboards with the with id :{dashId} !");
             }
+        }
+
+        // search by part of layer name 
+        [HttpGet("{pName}")]
+        public IActionResult SearchByName(string pName)
+        {
+            var pNameE = pName.ToUpper();
+            var oldD = _context.Dashboards.Where(d => d.Name.ToUpper().Contains(pNameE)).ToList();
+
+            if (oldD.Count() > 0)
+            {
+                var newD = new List<DashGetDTO>();// new obj of dto to show data
+
+                foreach (Dashboard ds in oldD)
+                {
+                    newD.Add(new DashGetDTO()
+                    {
+                        Name = ds.Name,
+                        Widgets = ds.Widgets,
+                        Layers = ds.Layers,
+                        CreatedOn=ds.CreatedOn,
+                    });
+                }
+                return Ok(newD);
+            }
+            else
+            {
+                return Ok("No Dashboards with specific part od name !");
+            }
+
         }
     }
 }

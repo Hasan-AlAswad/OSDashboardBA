@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OSDashboardBA.Services;
 using System.ComponentModel.DataAnnotations;
 
 namespace OSDashboardBA.Models

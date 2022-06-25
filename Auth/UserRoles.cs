@@ -1,4 +1,4 @@
-﻿namespace OSDashboardBA.Models
+﻿namespace OSDashboardBA.Auth
 {
     public static class UserRoles
     {

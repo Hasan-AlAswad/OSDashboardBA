@@ -21,29 +21,27 @@ namespace OSDashboardBA.Controllers
         // fn - actions - 
 
         // get 
-        [Route("GetAllUserDashs")]     // route
         [HttpGet]                     // verb // [attribute]
         public IActionResult GetAllUserDashs()
         {
             // get list of dashboards exist
             var oldUsers = _context.UsersD.Where(ly => ly.IsDeleted != true).ToList();
 
-            // new obj of dto to show data 
-            var newUsers = new List<UserGetDTO>();
-
-            foreach (User user in oldUsers)
+            if (oldUsers.Count > 0)
             {
-                newUsers.Add(new UserGetDTO()
+                // new obj of dto to show data 
+                var newUsers = new List<UserGetDTO>();
+
+                foreach (User user in oldUsers)
                 {
-                    Name = user.Name,
-                    // Dashboards = user.Dashboards,
-                    Layers = user.Layers,
-                    
-                });
-            }
+                    newUsers.Add(new UserGetDTO()
+                    {
+                        Name = user.Name,
+                        Dashboards = user.Dashboards,
+                        Layers = user.Layers,
 
-            if (newUsers.Count > 0)
-            {
+                    });
+                }
                 return Ok(newUsers);
             }
             else
@@ -53,24 +51,22 @@ namespace OSDashboardBA.Controllers
         }
 
         // SHORTLY add one User "json in body" fn()
-        [Route("AddUser")]
         [HttpPost]
         public IActionResult AddUser(UserPostDTO newUser)
         {
             var user = new User()
             {
                 Name = newUser.Name,
-         
+            
 
             };
             _context.UsersD.Add(user);
             _context.SaveChanges();
-            return Ok($"User: {newUser.Name} was added successfully!");
+            return Ok($"User: {user.Name} was added successfully!");
         }
 
-        // edit DepName by id fn() // NEED CHECK !
-        [Route("EditUser")]
-        [HttpPut]
+        // edit user by id fn() // NEED CHECK !
+        [HttpPut("{id}")]
         public IActionResult EditUser(int id, UserPostDTO newUser)
         {
             // access wanted dep with sent id
@@ -78,7 +74,6 @@ namespace OSDashboardBA.Controllers
             if (oldUser != null)
             {
                 oldUser.Name = newUser.Name;
-                
 
 
                 _context.SaveChanges();
@@ -91,8 +86,7 @@ namespace OSDashboardBA.Controllers
         }
 
         // delete fn()
-        [Route("DeleteUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteUser(int id)
         {
             // access dep with given id 
@@ -111,8 +105,7 @@ namespace OSDashboardBA.Controllers
         }
 
         // drop fn()
-        [Route("DropUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DropUser(int id)
         {
             // access dep with given id 
@@ -130,13 +123,58 @@ namespace OSDashboardBA.Controllers
 
         }
 
-        // search by part of dash name 
-        [Route("SearchByName")]
-        [HttpGet]
-        public List<User> SearchByName(string pName)
+        // search by id
+        [HttpGet("{userId}")]
+        public IActionResult GetUserById(int userId)             
+        {
+
+            var user = _context.UsersD.FirstOrDefault(ds => ds.Id == userId);
+            // new obj of dto to show data 
+            if (user != null)
+            {
+                var userD = new UserGetDTO()
+                {
+                    Name = user.Name,
+                    Layers = user.Layers,
+                    Dashboards=user.Dashboards,
+                };
+                return Ok(userD);
+            }
+            else
+            {
+                return Ok($"no user with the with id:{userId}");
+            }
+        }
+
+        // search by part of layer name 
+        [HttpGet("{pName}")]
+        public IActionResult SearchByName(string pName)
         {
             var pNameE = pName.ToUpper();
-            return _context.UsersD.Where(u => u.Name.Contains(pNameE)).ToList();
+            var oldU = _context.UsersD.Where(d => d.Name.ToUpper().Contains(pNameE)).ToList();
+
+            if (oldU.Count() > 0)
+            {
+                var newU = new List<UserGetDTO>();// new obj of dto to show data
+
+                foreach (User ds in oldU)
+                {
+                    newU.Add(new UserGetDTO()
+                    {
+
+                        Name = ds.Name,
+                        Layers = ds.Layers,
+                        Dashboards = ds.Dashboards,
+                    });
+                }
+                return Ok(newU);
+            }
+            else
+            {
+                return Ok("No Users with specific part od name !");
+            }
+
         }
+
     }
 }

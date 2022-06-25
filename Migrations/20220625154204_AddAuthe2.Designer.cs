@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OSDashboardBA.DB;
 
@@ -11,9 +12,10 @@ using OSDashboardBA.DB;
 namespace OSDashboardBA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220625154204_AddAuthe2")]
+    partial class AddAuthe2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -285,26 +287,7 @@ namespace OSDashboardBA.Migrations
                     b.ToTable("Layers");
                 });
 
-            modelBuilder.Entity("OSDashboardBA.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UsersD");
-                });
-
-            modelBuilder.Entity("OSDashboardBA.Services.TextString", b =>
+            modelBuilder.Entity("OSDashboardBA.Models.TextString", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -328,6 +311,25 @@ namespace OSDashboardBA.Migrations
                     b.HasIndex("LayerId");
 
                     b.ToTable("TextString");
+                });
+
+            modelBuilder.Entity("OSDashboardBA.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UsersD");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -403,7 +405,7 @@ namespace OSDashboardBA.Migrations
                     b.Navigation("UserD");
                 });
 
-            modelBuilder.Entity("OSDashboardBA.Services.TextString", b =>
+            modelBuilder.Entity("OSDashboardBA.Models.TextString", b =>
                 {
                     b.HasOne("OSDashboardBA.Models.Dashboard", null)
                         .WithMany("Widgets")

@@ -16,28 +16,14 @@ namespace OSDashboardBA.Models
         public string Name { get; set; }
         public Boolean IsDeleted { get; set; }
 
-        //// from registeration
-        //public string? FirstName { get; set; }
-        //public string? LastName { get; set; }
-        //public int Age { get; set; }
-
         // relations 
         public List<Dashboard> Dashboards { get; set; }         // many
         public List<Layer> Layers { get; set; }                    // many
 
     }
 
-    //// roles
-    //public class AppRole : IdentityRole
-    //{
-    //    //public int RoleId { get; set; }
-    //    //public string? RoleName { get; set; }
-    //    //public string? UserName { get; set; }
 
-
-    //}
-
-    // dto  - to be continued 
+    // dto  
     public class UserGetDTO
     {
         public string Name { get; set; }
