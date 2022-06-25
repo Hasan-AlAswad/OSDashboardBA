@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-//using OSDashboardBA.DB;
 using OSDashboardBA.Models;
 using System.Security.Claims;
 using OSDashboardBA.Auth;
@@ -110,24 +109,24 @@ namespace OSDashboardBA.Controllers
 
         }
 
-        // drop fn()
-        [HttpDelete("{id}")]
-        public IActionResult DropDashboard(int id)
-        {
-            // access dep with given id 
-            var ds = _context.Dashboards.FirstOrDefault(dsh => dsh.Id == id);
-            if (ds != null)
-            {
-                _context.Remove(ds);
-                _context.SaveChanges();
-                return Ok($"Dashboard with id: {id} was deleted!");
-            }
-            else
-            {
-                return Ok($"No Dashboard with id: {id}");
-            }
+        //// drop fn()
+        //[HttpDelete("{id}")]
+        //public IActionResult DropDashboard(int id)
+        //{
+        //    // access dep with given id 
+        //    var ds = _context.Dashboards.FirstOrDefault(dsh => dsh.Id == id);
+        //    if (ds != null)
+        //    {
+        //        _context.Remove(ds);
+        //        _context.SaveChanges();
+        //        return Ok($"Dashboard with id: {id} was deleted!");
+        //    }
+        //    else
+        //    {
+        //        return Ok($"No Dashboard with id: {id}");
+        //    }
 
-        }
+        //}
 
         // get by id 
         [HttpGet("{dashId}")]

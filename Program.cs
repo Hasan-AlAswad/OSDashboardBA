@@ -17,15 +17,15 @@ ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddScoped<FileService>();  // H- file services
 
-// H- add CORS // link backend with front 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000/");
-        });
-});
+//// H- add CORS // link backend with front 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(
+//        policy =>
+//        {
+//            policy.WithOrigins("http://localhost:3000/");
+//        });
+//});
 
 
 // H- For Entity Framework

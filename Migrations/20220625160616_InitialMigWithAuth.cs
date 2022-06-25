@@ -5,31 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OSDashboardBA.Migrations
 {
-    public partial class AddAuthe : Migration
+    public partial class InitialMigWithAuth : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Dashboards_Users_UserDId",
-                table: "Dashboards");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Layers_Users_UserDId",
-                table: "Layers");
-
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Users",
-                table: "Users");
-
-            migrationBuilder.RenameTable(
-                name: "Users",
-                newName: "UsersD");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_UsersD",
-                table: "UsersD",
-                column: "Id");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -67,6 +46,20 @@ namespace OSDashboardBA.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsersD",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersD", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,6 +168,81 @@ namespace OSDashboardBA.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Dashboards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserDId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Dashboards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Dashboards_UsersD_UserDId",
+                        column: x => x.UserDId,
+                        principalTable: "UsersD",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Layers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LayerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserDId = table.Column<int>(type: "int", nullable: true),
+                    DashboardId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Layers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Layers_Dashboards_DashboardId",
+                        column: x => x.DashboardId,
+                        principalTable: "Dashboards",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Layers_UsersD_UserDId",
+                        column: x => x.UserDId,
+                        principalTable: "UsersD",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TextString",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DashboardId = table.Column<int>(type: "int", nullable: true),
+                    LayerId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TextString", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TextString_Dashboards_DashboardId",
+                        column: x => x.DashboardId,
+                        principalTable: "Dashboards",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TextString_Layers_LayerId",
+                        column: x => x.LayerId,
+                        principalTable: "Layers",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -214,31 +282,34 @@ namespace OSDashboardBA.Migrations
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Dashboards_UsersD_UserDId",
+            migrationBuilder.CreateIndex(
+                name: "IX_Dashboards_UserDId",
                 table: "Dashboards",
-                column: "UserDId",
-                principalTable: "UsersD",
-                principalColumn: "Id");
+                column: "UserDId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Layers_UsersD_UserDId",
+            migrationBuilder.CreateIndex(
+                name: "IX_Layers_DashboardId",
                 table: "Layers",
-                column: "UserDId",
-                principalTable: "UsersD",
-                principalColumn: "Id");
+                column: "DashboardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Layers_UserDId",
+                table: "Layers",
+                column: "UserDId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TextString_DashboardId",
+                table: "TextString",
+                column: "DashboardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TextString_LayerId",
+                table: "TextString",
+                column: "LayerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Dashboards_UsersD_UserDId",
-                table: "Dashboards");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Layers_UsersD_UserDId",
-                table: "Layers");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -255,37 +326,22 @@ namespace OSDashboardBA.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "TextString");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_UsersD",
-                table: "UsersD");
+            migrationBuilder.DropTable(
+                name: "Layers");
 
-            migrationBuilder.RenameTable(
-                name: "UsersD",
-                newName: "Users");
+            migrationBuilder.DropTable(
+                name: "Dashboards");
 
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Users",
-                table: "Users",
-                column: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Dashboards_Users_UserDId",
-                table: "Dashboards",
-                column: "UserDId",
-                principalTable: "Users",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Layers_Users_UserDId",
-                table: "Layers",
-                column: "UserDId",
-                principalTable: "Users",
-                principalColumn: "Id");
+            migrationBuilder.DropTable(
+                name: "UsersD");
         }
     }
 }

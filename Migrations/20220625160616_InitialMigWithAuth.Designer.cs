@@ -12,8 +12,8 @@ using OSDashboardBA.DB;
 namespace OSDashboardBA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220625155544_AddAutheModified")]
-    partial class AddAutheModified
+    [Migration("20220625160616_InitialMigWithAuth")]
+    partial class InitialMigWithAuth
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

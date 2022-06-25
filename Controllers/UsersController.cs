@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OSDashboardBA.Auth;
 using OSDashboardBA.DB;
 using OSDashboardBA.Models;
 
@@ -104,24 +105,24 @@ namespace OSDashboardBA.Controllers
 
         }
 
-        // drop fn()
-        [HttpDelete("{id}")]
-        public IActionResult DropUser(int id)
-        {
-            // access dep with given id 
-            var user = _context.UsersD.FirstOrDefault(u => u.Id == id);
-            if (user != null)
-            {
-                _context.Remove(user);
-                _context.SaveChanges();
-                return Ok($"User with id: {id} was deleted!");
-            }
-            else
-            {
-                return Ok($"no User with id: {id}");
-            }
+        //// drop fn()
+        //[HttpDelete("{id}")]
+        //public IActionResult DropUser(int id)
+        //{
+        //    // access dep with given id 
+        //    var user = _context.UsersD.FirstOrDefault(u => u.Id == id);
+        //    if (user != null)
+        //    {
+        //        _context.Remove(user);
+        //        _context.SaveChanges();
+        //        return Ok($"User with id: {id} was deleted!");
+        //    }
+        //    else
+        //    {
+        //        return Ok($"no User with id: {id}");
+        //    }
 
-        }
+        //}
 
         // search by id
         [HttpGet("{userId}")]

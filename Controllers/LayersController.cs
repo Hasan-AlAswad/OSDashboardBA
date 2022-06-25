@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OSDashboardBA.Auth;
 using OSDashboardBA.DB;
 using OSDashboardBA.Models;
 using OSDashboardBA.Services;
@@ -120,24 +121,25 @@ namespace OSLayerBA.Controllers
 
         }
 
-        // drop fn()
-        [HttpDelete("{layerId}")]
-        public IActionResult DropLayer(int layerId)
-        {
-            // access lay with given id 
-            var lay = _context.Layers.FirstOrDefault(ly => ly.Id == layerId);
-            if (lay != null)
-            {
-                _context.Remove(lay);
-                _context.SaveChanges();
-                return Ok($"Layer with id: {layerId} was deleted!");
-            }
-            else
-            {
-                return Ok($"no Layer with id: {layerId}");
-            }
+        //// drop fn()
+        //[HttpDelete("{layerId}")]
+        //public IActionResult DropLayer(int layerId)
+        //{
+        //    // access lay with given id 
+        //    var lay = _context.Layers.FirstOrDefault(ly => ly.Id == layerId);
+        //    if (lay != null)
+        //    {
+        //        _context.Remove(lay);
+        //        _context.SaveChanges();
+        //        return Ok($"Layer with id: {layerId} was deleted!");
+        //    }
+        //    else
+        //    {
+        //        return Ok($"no Layer with id: {layerId}");
+        //    }
 
-        }
+        //}
+
         [HttpGet("{layerId}")]
         public IActionResult GetLayerById(int layerId)             
         {
