@@ -20,7 +20,7 @@ namespace OSDashboardBA.Models
         // public string[]? Attributes { get; set; }       // check - schemeless ?
         public DateTime CreatedOn { get; set; }
         // geojson
-        public String GeoJson { get; set; }
+        public string GeoJson { get; set; }
 
         public Boolean IsDeleted { get; set; }
         // relations 

@@ -5,6 +5,7 @@ using OSDashboardBA.Models;
 using System.Security.Claims;
 using OSDashboardBA.Auth;
 using OSDashboardBA.DB;
+using Microsoft.EntityFrameworkCore;
 
 namespace OSDashboardBA.Controllers
 {
@@ -28,7 +29,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult GetAllDashboards()
         {
             // get list of dashboards exist
-            var dashs = _context.Dashboards.Where(st => st.IsDeleted != true).ToList();
+            var dashs = _context.Dashboards.Include(dash=>dash.Layers).Where(st => st.IsDeleted != true).ToList();
             if (dashs.Count() > 0)
             {
                 // new obj of dto to show data 
@@ -57,12 +58,18 @@ namespace OSDashboardBA.Controllers
         public IActionResult AddDashboard(DashPostDTO newDsb)   //  int userId
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            List<Layer> DBLayers = new List<Layer>();
+            foreach(int id in newDsb.LayersId)
+            {
+                Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == id);
+                DBLayers.Add(layer);
+            }
             var dsp = new Dashboard()
             {
                 Name = newDsb.Name,
                 Widgets = newDsb.Widgets,
-                Layers = newDsb.Layers,
-                UserId = userId
+                UserId = userId,
+                Layers = DBLayers
             };
 
             _context.Dashboards.Add(dsp);   // add new db to general dbs list not to db of a user 
@@ -80,7 +87,14 @@ namespace OSDashboardBA.Controllers
             {
                 oldDs.Name = newDs.Name;
                 oldDs.Widgets = newDs.Widgets;
-                oldDs.Layers = newDs.Layers;
+                List<Layer> DBLayers = new List<Layer>();
+                foreach (int Id in newDs.LayersId)
+                {
+                    Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == Id);
+                    DBLayers.Add(layer);
+                }
+
+                oldDs.Layers = DBLayers;
                 _context.SaveChanges();
                 return Ok($"Dashboard: {oldDs.Name} was edited");
             }
@@ -151,7 +165,7 @@ namespace OSDashboardBA.Controllers
         }
 
         // search by part of layer name 
-        [HttpGet("{pName}")]
+        [HttpGet("getByName")]
         public IActionResult SearchByName(string pName)
         {
             var pNameE = pName.ToUpper();

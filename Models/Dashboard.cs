@@ -36,6 +36,7 @@ namespace OSDashboardBA.Models
     // get
     public class DashGetDTO
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public List<Layer> Layers { get; set; } // many
         public DateTime CreatedOn { get; set; }
@@ -45,7 +46,7 @@ namespace OSDashboardBA.Models
     public class DashPostDTO
     {
         public string Name { get; set; }
-        public List<Layer> Layers { get; set; } // many
+        public List<int> LayersId { get; set; } // many
         public string Widgets { get; set; }
     }
 }

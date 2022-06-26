@@ -31,8 +31,9 @@ namespace OSLayerBA.Controllers
         [HttpGet]                     // verb // [attribute]
         public IActionResult GetAllLayers()
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             // get list of dashboards exist
-            var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true).ToList();
+            var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true&&ly.UserId==userId).ToList();
 
             // new obj of dto to show data 
             if (oldLay.Count() > 0)
@@ -66,7 +67,6 @@ namespace OSLayerBA.Controllers
             var lay = new Layer()
             {
                 LayerName = newLay.LayerName,
-                // GeoJson=newLay.GeoJson,
                 UserId = userId,
                
             };
@@ -111,7 +111,8 @@ namespace OSLayerBA.Controllers
         public IActionResult DeleteLayer(int layerId)
         {
             // access lay with given id 
-            var lay = _context.Layers.FirstOrDefault(ly => ly.Id == layerId);
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var lay = _context.Layers.FirstOrDefault(ly => ly.Id == layerId && ly.UserId == userId);
             if (lay != null)
             {
                 lay.IsDeleted = true;
@@ -148,7 +149,7 @@ namespace OSLayerBA.Controllers
         public IActionResult GetLayerById(int layerId)             
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var layer = _context.Layers.FirstOrDefault(ds => ds.Id == layerId);
+            var layer = _context.Layers.FirstOrDefault(ds => ds.Id == layerId && ds.UserId == userId);
             
             if (layer != null)
             {
@@ -168,7 +169,7 @@ namespace OSLayerBA.Controllers
             }
             else
             {
-                return Ok($"no Layers with id :{userId}!");
+                return Ok($"no Layers with id :{layerId}!");
             }
         }
 

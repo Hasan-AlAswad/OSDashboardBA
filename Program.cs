@@ -9,6 +9,7 @@ using System.Text;
 using OSDashboardBA.Auth;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigurationManager configuration = builder.Configuration;
@@ -18,14 +19,9 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddScoped<FileService>();  // H- file services
 
 //// H- add CORS // link backend with front 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddDefaultPolicy(
-//        policy =>
-//        {
-//            policy.WithOrigins("http://localhost:3000/");
-//        });
-//});
+///
+builder.Services.AddCors();
+
 
 
 // H- For Entity Framework
@@ -106,7 +102,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors(options =>
+{
+    options.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
+});
 
 app.UseAuthentication(); // H- Middleware to read credintials from cookies
 app.UseAuthorization();
