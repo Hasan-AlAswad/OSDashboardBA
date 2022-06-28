@@ -31,15 +31,13 @@ namespace OSLayerBA.Controllers
         [HttpGet]                     // verb // [attribute]
         public IActionResult GetAllLayers()
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             // get list of dashboards exist
-            var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true&&ly.UserId==userId).ToList();
+            var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true).ToList();
 
             // new obj of dto to show data 
             if (oldLay.Count() > 0)
             {
             var newLay = new List<LayGetDTO>();
-
             foreach (Layer lay in oldLay)
             {
                 newLay.Add(new LayGetDTO()
@@ -59,6 +57,36 @@ namespace OSLayerBA.Controllers
             }
         }
 
+        //get by id  
+        // [Route("/searchId")]
+        [HttpGet("{layerId}")]
+        public IActionResult GetLayerById(int layerId)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var layer = _context.Layers.FirstOrDefault(ds => ds.Id == layerId && ds.UserId == userId);
+
+            if (layer != null)
+            {
+
+                // string readFile = fileService.ReadFile($@"Files\{userId}\GeoJsons\{layerId}.json");
+                string readFile = fileService.ReadFile(layer.GeoJson);
+
+                var lay = new LayGetDTO()               // new obj of dto to show data 
+                {
+                    Id = layer.Id,
+                    LayerName = layer.LayerName,
+                    CreatedOn = layer.CreatedOn,
+                    GeoJson = readFile,
+
+                };
+                return Ok(lay);
+            }
+            else
+            {
+                return Ok($"no Layers with id :{layerId}!");
+            }
+        }
+
         // SHORTLY add one Layer "json in body" fn()
         [HttpPost]
         public IActionResult AddLayer(LayPostDTO newLay)  // , int userId
@@ -67,9 +95,9 @@ namespace OSLayerBA.Controllers
             var lay = new Layer()
             {
                 LayerName = newLay.LayerName,
-                UserId = userId,
-               
+                UserId = userId,            
             };
+
             var path = fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson, lay.Id);
             lay.GeoJson = path;
 
@@ -79,12 +107,7 @@ namespace OSLayerBA.Controllers
 
             //string.Format("{0}",newLay)
             //RequestContext.Principal
-
-            
-
             // userId : extract from jwt token 
-  
-
         }
 
         // edit layer by id fn() 
@@ -144,34 +167,7 @@ namespace OSLayerBA.Controllers
         //    }
 
         //}
-       // [Route("/searchId")]
-        [HttpGet("{layerId}")]
-        public IActionResult GetLayerById(int layerId)             
-        {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var layer = _context.Layers.FirstOrDefault(ds => ds.Id == layerId && ds.UserId == userId);
-            
-            if (layer != null)
-            {
-                
-                // string readFile = fileService.ReadFile($@"Files\{userId}\GeoJsons\{layerId}.json");
-                string readFile = fileService.ReadFile(layer.GeoJson);
 
-                var lay = new LayGetDTO()               // new obj of dto to show data 
-                {
-                    Id = layer.Id,
-                    LayerName = layer.LayerName,
-                    CreatedOn = layer.CreatedOn,
-                    GeoJson = readFile,
-
-                };
-                return Ok(lay);
-            }
-            else
-            {
-                return Ok($"no Layers with id :{layerId}!");
-            }
-        }
 
         //// search by part of layer name 
         //[Route("/searchName")]

@@ -39,10 +39,11 @@ namespace OSDashboardBA.Controllers
                 {
                     dashes.Add(new DashGetDTO()
                     {
+                        Id = dash.Id,
                         Name = dash.Name,
+                        CreatedOn = dash.CreatedOn,
                         // Layers = dash.Layers,
                         // Widgets = dash.Widgets,
-                        CreatedOn = dash.CreatedOn,
                     });
                 }
                 return Ok(dashes);
@@ -53,22 +54,48 @@ namespace OSDashboardBA.Controllers
             }
         }
 
+        // get by id 
+        [HttpGet("{dashId}")]
+        public IActionResult GetDashById(int dashId)
+        {
+            var dash = _context.Dashboards.FirstOrDefault(ds => ds.Id == dashId);
+            // new obj of dto to show data 
+            if (dash != null)
+            {
+                var dashe = new DashGetDTO()
+                {
+                    Id = dash.Id,
+                    Name = dash.Name,
+                    Widgets = dash.Widgets,
+                    CreatedOn = dash.CreatedOn,
+                    //Layers = dash.Layers,
+                };
+                return Ok(dashe);
+            }
+            else
+            {
+                return Ok($"No Dashboards with the with id :{dashId} !");
+            }
+        }
+
         // SHORTLY add one Dashboard "json in body" fn()
         [HttpPost]
         public IActionResult AddDashboard(DashPostDTO newDsb)   //  int userId
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             List<Layer> DBLayers = new List<Layer>();
-            foreach(int id in newDsb.LayersId)
+            
+            foreach(int id in newDsb.LayersIds) // how ???
             {
                 Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == id);
                 DBLayers.Add(layer);
             }
             var dsp = new Dashboard()
             {
+                UserId = userId,
                 Name = newDsb.Name,
                 Widgets = newDsb.Widgets,
-                UserId = userId,
                 Layers = DBLayers
             };
 
@@ -87,8 +114,9 @@ namespace OSDashboardBA.Controllers
             {
                 oldDs.Name = newDs.Name;
                 oldDs.Widgets = newDs.Widgets;
+
                 List<Layer> DBLayers = new List<Layer>();
-                foreach (int Id in newDs.LayersId)
+                foreach (int Id in newDs.LayersIds)
                 {
                     Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == Id);
                     DBLayers.Add(layer);
@@ -123,6 +151,36 @@ namespace OSDashboardBA.Controllers
 
         }
 
+        // search by part of layer name 
+        [HttpGet("getByName")]
+        public IActionResult SearchByName(string pName)
+        {
+            var pNameE = pName.ToUpper();
+            var oldD = _context.Dashboards.Where(d => d.Name.ToUpper().Contains(pNameE)).ToList();
+
+            if (oldD.Count() > 0)
+            {
+                var newD = new List<DashGetDTO>();// new obj of dto to show data
+
+                foreach (Dashboard ds in oldD)
+                {
+                    newD.Add(new DashGetDTO()
+                    {
+                        Name = ds.Name,
+                        Widgets = ds.Widgets,
+                        Layers = ds.Layers,
+                        CreatedOn = ds.CreatedOn,
+                    });
+                }
+                return Ok(newD);
+            }
+            else
+            {
+                return Ok("No Dashboards with specific part od name !");
+            }
+
+        }
+
         //// drop fn()
         //[HttpDelete("{id}")]
         //public IActionResult DropDashboard(int id)
@@ -142,56 +200,5 @@ namespace OSDashboardBA.Controllers
 
         //}
 
-        // get by id 
-        [HttpGet("{dashId}")]
-        public IActionResult GetDashById(int dashId)            
-        {
-            var dash = _context.Dashboards.FirstOrDefault(ds => ds.Id == dashId);
-            // new obj of dto to show data 
-            if (dash!=null)
-            {
-            var dashe = new DashGetDTO() {
-                Name = dash.Name,
-                Layers = dash.Layers,
-                Widgets = dash.Widgets,
-                CreatedOn = dash.CreatedOn,
-            };
-                return Ok(dashe);
-            }
-            else
-            {
-                return Ok($"No Dashboards with the with id :{dashId} !");
-            }
-        }
-
-        // search by part of layer name 
-        [HttpGet("getByName")]
-        public IActionResult SearchByName(string pName)
-        {
-            var pNameE = pName.ToUpper();
-            var oldD = _context.Dashboards.Where(d => d.Name.ToUpper().Contains(pNameE)).ToList();
-
-            if (oldD.Count() > 0)
-            {
-                var newD = new List<DashGetDTO>();// new obj of dto to show data
-
-                foreach (Dashboard ds in oldD)
-                {
-                    newD.Add(new DashGetDTO()
-                    {
-                        Name = ds.Name,
-                        Widgets = ds.Widgets,
-                        Layers = ds.Layers,
-                        CreatedOn=ds.CreatedOn,
-                    });
-                }
-                return Ok(newD);
-            }
-            else
-            {
-                return Ok("No Dashboards with specific part od name !");
-            }
-
-        }
     }
 }

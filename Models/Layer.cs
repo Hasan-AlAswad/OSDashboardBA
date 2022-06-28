@@ -42,7 +42,7 @@ namespace OSDashboardBA.Models
     public class LayPostDTO
     {
         public string LayerName { get; set; }
-        public String GeoJson { get; set; }
+        public string GeoJson { get; set; }
 
     }
 }

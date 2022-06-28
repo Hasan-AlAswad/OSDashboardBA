@@ -25,10 +25,10 @@ namespace OSDashboardBA.Models
         // charts ?
 
         // relation props 
-        public string UserId { get; set; }     // nav prop 
+        public User UserD { get; set; }         // one  
+        public string UserId { get; set; }      // navigation property
         public List<Layer> Layers { get; set; } // many
-
-        public User UserD { get; set; }
+        // public List<int> LayersIds { get; set; } // navigation property // check ???
 
     }
 
@@ -46,7 +46,7 @@ namespace OSDashboardBA.Models
     public class DashPostDTO
     {
         public string Name { get; set; }
-        public List<int> LayersId { get; set; } // many
+        public List<int> LayersIds { get; set; } // many
         public string Widgets { get; set; }
     }
 }
