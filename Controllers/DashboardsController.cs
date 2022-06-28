@@ -40,8 +40,8 @@ namespace OSDashboardBA.Controllers
                     dashes.Add(new DashGetDTO()
                     {
                         Name = dash.Name,
-                        Layers = dash.Layers,
-                        Widgets = dash.Widgets,
+                        // Layers = dash.Layers,
+                        // Widgets = dash.Widgets,
                         CreatedOn = dash.CreatedOn,
                     });
                 }
