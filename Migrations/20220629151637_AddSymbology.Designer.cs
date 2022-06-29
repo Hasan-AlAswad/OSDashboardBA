@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OSDashboardBA.DB;
 
@@ -11,9 +12,10 @@ using OSDashboardBA.DB;
 namespace OSDashboardBA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220629151637_AddSymbology")]
+    partial class AddSymbology
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,10 +88,6 @@ namespace OSDashboardBA.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -141,8 +139,6 @@ namespace OSDashboardBA.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -243,15 +239,18 @@ namespace OSDashboardBA.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserDId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Widgets")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserDId");
 
                     b.ToTable("Dashboards");
                 });
@@ -282,21 +281,28 @@ namespace OSDashboardBA.Migrations
                     b.Property<string>("Style")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserDId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DashboardId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserDId");
 
                     b.ToTable("Layers");
                 });
 
             modelBuilder.Entity("OSDashboardBA.Models.User", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -304,10 +310,9 @@ namespace OSDashboardBA.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("_Id")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasDiscriminator().HasValue("User");
+                    b.ToTable("UsersD");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -363,9 +368,11 @@ namespace OSDashboardBA.Migrations
 
             modelBuilder.Entity("OSDashboardBA.Models.Dashboard", b =>
                 {
-                    b.HasOne("OSDashboardBA.Models.User", null)
+                    b.HasOne("OSDashboardBA.Models.User", "UserD")
                         .WithMany("Dashboards")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserDId");
+
+                    b.Navigation("UserD");
                 });
 
             modelBuilder.Entity("OSDashboardBA.Models.Layer", b =>
@@ -374,9 +381,11 @@ namespace OSDashboardBA.Migrations
                         .WithMany("Layers")
                         .HasForeignKey("DashboardId");
 
-                    b.HasOne("OSDashboardBA.Models.User", null)
+                    b.HasOne("OSDashboardBA.Models.User", "UserD")
                         .WithMany("Layers")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserDId");
+
+                    b.Navigation("UserD");
                 });
 
             modelBuilder.Entity("OSDashboardBA.Models.Dashboard", b =>

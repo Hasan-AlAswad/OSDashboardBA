@@ -11,7 +11,6 @@ namespace OSDashboardBA.Models
         {
             Layers = new List<Layer>();
             CreatedOn = DateTime.Now;
-            UserD = new User();
             
         }
 
@@ -25,7 +24,6 @@ namespace OSDashboardBA.Models
         // charts ?
 
         // relation props 
-        public User UserD { get; set; }         // one  
         public string UserId { get; set; }      // navigation property
         public List<Layer> Layers { get; set; } // many
         // public List<int> LayersIds { get; set; } // navigation property // check ???

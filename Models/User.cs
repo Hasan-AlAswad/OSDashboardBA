@@ -2,7 +2,7 @@
 
 namespace OSDashboardBA.Models
 {
-    public class User 
+    public class User:IdentityUser
     {
         // ctor
         public User()
@@ -12,7 +12,7 @@ namespace OSDashboardBA.Models
         }
 
         // props
-        public int Id { get; set; }
+        public int _Id { get; set; }
         public string Name { get; set; }
         public Boolean IsDeleted { get; set; }
 

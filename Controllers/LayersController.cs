@@ -46,7 +46,6 @@ namespace OSLayerBA.Controllers
                     Id = lay.Id,
                     LayerName = lay.LayerName,
                     CreatedOn = lay.CreatedOn,
-                    // GeoJson = lay.GeoJson,
                 });
             }
 
@@ -78,7 +77,7 @@ namespace OSLayerBA.Controllers
                     LayerName = layer.LayerName,
                     CreatedOn = layer.CreatedOn,
                     GeoJson = readFile,
-
+                    Style = layer.Style
                 };
                 return Ok(lay);
             }
@@ -96,11 +95,13 @@ namespace OSLayerBA.Controllers
             var lay = new Layer()
             {
                 LayerName = newLay.LayerName,
-                UserId = userId,            
+                UserId = userId,   
+                Style = newLay.Style,
             };
-
-            var path = fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson, lay.Id);
+ 
+            var path = fileService.WriteFile($@"Files\{userId}\GeoJsons", "json", newLay.GeoJson);
             lay.GeoJson = path;
+
 
             _context.Layers.Add(lay);   // wrong: add new layer to layers list not to layers of a user 
             _context.SaveChanges();
@@ -120,7 +121,8 @@ namespace OSLayerBA.Controllers
             if (oldDs != null)
             {
                 oldDs.LayerName = newLay.LayerName;
-                oldDs.GeoJson = newLay.GeoJson;
+                oldDs.Style = newLay.Style;
+                fileService.EditFile(oldDs.GeoJson, newLay.GeoJson);
                 _context.SaveChanges();
                 return Ok($"Layer: {oldDs.LayerName} was edited");
             }

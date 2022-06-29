@@ -10,7 +10,6 @@ namespace OSDashboardBA.Models
         public Layer()
         {
             CreatedOn = DateTime.Now;
-            UserD = new User();
          
         }
 
@@ -21,11 +20,12 @@ namespace OSDashboardBA.Models
         public DateTime CreatedOn { get; set; }
         // geojson
         public string GeoJson { get; set; }
+        // symbology
+        public string Style { get; set; }
 
         public Boolean IsDeleted { get; set; }
         // relations 
         public string UserId { get; set; }
-        public User UserD { get; set; }             // check 
     }
 
     // DTOs
@@ -35,7 +35,8 @@ namespace OSDashboardBA.Models
         public int Id { get; set; }
         public string LayerName { get; set; }
         public DateTime CreatedOn { get; set; }
-        public String GeoJson { get; set; }
+        public string GeoJson { get; set; }
+        public string Style { get; set; }
     }
 
     // POST 
@@ -43,6 +44,6 @@ namespace OSDashboardBA.Models
     {
         public string LayerName { get; set; }
         public string GeoJson { get; set; }
-
+        public string Style { get; set; }
     }
 }

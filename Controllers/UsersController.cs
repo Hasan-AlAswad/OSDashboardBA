@@ -71,7 +71,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult EditUser(int id, UserPostDTO newUser)
         {
             // access wanted dep with sent id
-            var oldUser = _context.UsersD.FirstOrDefault(user => user.Id == id);
+            var oldUser = _context.UsersD.FirstOrDefault(user => user._Id == id);
             if (oldUser != null)
             {
                 oldUser.Name = newUser.Name;
@@ -91,7 +91,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult DeleteUser(int id)
         {
             // access dep with given id 
-            var user = _context.UsersD.FirstOrDefault(u => u.Id == id);
+            var user = _context.UsersD.FirstOrDefault(u => u._Id == id);
             if (user != null)
             {
                 user.IsDeleted = true;
@@ -129,7 +129,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult GetUserById(int userId)             
         {
 
-            var user = _context.UsersD.FirstOrDefault(ds => ds.Id == userId);
+            var user = _context.UsersD.FirstOrDefault(ds => ds._Id == userId);
             // new obj of dto to show data 
             if (user != null)
             {
