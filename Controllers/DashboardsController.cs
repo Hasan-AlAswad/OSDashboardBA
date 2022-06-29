@@ -29,7 +29,7 @@ namespace OSDashboardBA.Controllers
         public IActionResult GetAllDashboards()
         {
             // get list of dashboards exist
-            var dashs = _context.Dashboards.Include(dash=>dash.Layers).Where(st => st.IsDeleted != true).ToList();
+            var dashs = _context.Dashboards.Where(st => st.IsDeleted != true).ToList();
             if (dashs.Count() > 0)
             {
                 // new obj of dto to show data 
@@ -58,7 +58,7 @@ namespace OSDashboardBA.Controllers
         [HttpGet("{dashId}")]
         public IActionResult GetDashById(int dashId)
         {
-            var dash = _context.Dashboards.FirstOrDefault(ds => ds.Id == dashId);
+            var dash = _context.Dashboards.Include(dash => dash.Layers).FirstOrDefault(ds => ds.Id == dashId);
             // new obj of dto to show data 
             if (dash != null)
             {
@@ -68,7 +68,7 @@ namespace OSDashboardBA.Controllers
                     Name = dash.Name,
                     Widgets = dash.Widgets,
                     CreatedOn = dash.CreatedOn,
-                    //Layers = dash.Layers,
+                    Layers = dash.Layers,
                 };
                 return Ok(dashe);
             }

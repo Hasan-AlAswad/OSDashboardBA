@@ -31,8 +31,9 @@ namespace OSLayerBA.Controllers
         [HttpGet]                     // verb // [attribute]
         public IActionResult GetAllLayers()
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             // get list of dashboards exist
-            var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true).ToList();
+            var oldLay = _context.Layers.Where(ly => ly.IsDeleted != true && ly.UserId == userId).ToList();
 
             // new obj of dto to show data 
             if (oldLay.Count() > 0)
