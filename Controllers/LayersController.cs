@@ -122,6 +122,7 @@ namespace OSLayerBA.Controllers
             {
                 oldDs.LayerName = newLay.LayerName;
                 oldDs.Style = newLay.Style;
+                oldDs.CreatedOn = DateTime.Now;
                 fileService.EditFile(oldDs.GeoJson, newLay.GeoJson);
                 _context.SaveChanges();
                 return Ok($"Layer: {oldDs.LayerName} was edited");

@@ -84,12 +84,14 @@ namespace OSDashboardBA.Controllers
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
-            List<Layer> DBLayers = new List<Layer>();
-            
-            foreach(int id in newDsb.LayersIds) // how ???
+            List<Layer> DBLayers = new();
+            if (newDsb.LayersIds != null)
             {
-                Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == id);
-                DBLayers.Add(layer);
+                foreach (int id in newDsb.LayersIds) // how ???
+                {
+                    Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == id);
+                    DBLayers.Add(layer);
+                }
             }
             var dsp = new Dashboard()
             {
@@ -115,7 +117,7 @@ namespace OSDashboardBA.Controllers
                 oldDs.Name = newDs.Name;
                 oldDs.Widgets = newDs.Widgets;
 
-                List<Layer> DBLayers = new List<Layer>();
+                List<Layer> DBLayers = new();
                 foreach (int Id in newDs.LayersIds)
                 {
                     Layer layer = _context.Layers.FirstOrDefault(ly => ly.Id == Id);
